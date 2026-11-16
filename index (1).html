@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>MedTrace – Medicine Traceability System</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#edf2f3;--panel:#fff;--ink:#14262d;--mute:#5d7078;--line:#d5dfe2;--brand:#0b6b63;--brandink:#fff;--side:#0d2b30;--sideink:#c9dde0;--ok:#157347;--okbg:#dff3e7;--bad:#b42318;--badbg:#fde4e1;--warn:#9a5b00;--warnbg:#fdf0d5;--info:#2a5d9f;--infobg:#e1ecfa;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0b1a1e;--panel:#12272c;--ink:#e3eef0;--mute:#8fa8ae;--line:#25414747;--line:#254147;--brand:#3fb5a8;--brandink:#06201d;--side:#07161a;--sideink:#a9c3c8;--ok:#6fd49a;--okbg:#12362a;--bad:#ff9b92;--badbg:#411a17;--warn:#f0c26a;--warnbg:#3a2c0d;--info:#8db9f2;--infobg:#142c4a;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0b1a1e;--panel:#12272c;--ink:#e3eef0;--mute:#8fa8ae;--line:#254147;--brand:#3fb5a8;--brandink:#06201d;--side:#07161a;--sideink:#a9c3c8;--ok:#6fd49a;--okbg:#12362a;--bad:#ff9b92;--badbg:#411a17;--warn:#f0c26a;--warnbg:#3a2c0d;--info:#8db9f2;--infobg:#142c4a;color-scheme:dark}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 "IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif}
+button,input,select{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
+.hide{display:none!important}
+/* login */
+#login{min-height:100vh;display:grid;grid-template-columns:1.05fr 1fr}
+.hero{background:var(--side);color:var(--sideink);padding:56px 48px;display:flex;flex-direction:column;justify-content:space-between;gap:32px}
+.hero h1{margin:0 0 12px;font-size:38px;line-height:1.15;color:#fff;font-weight:600;max-width:15ch}
+.hero p{margin:0;max-width:44ch}
+.strip{background:#e9eef0;border-radius:10px;padding:16px;max-width:380px;color:#14262d;box-shadow:0 0 0 2px #b7c4c8 inset}
+.pills{display:grid;grid-template-columns:repeat(8,1fr);gap:8px;margin-bottom:14px}
+.pills i{aspect-ratio:1;border-radius:50%;background:#fff;box-shadow:0 0 0 2px #aebdc2 inset,0 2px 3px #0003}
+.pills i:nth-child(5){background:#f6c7c2;box-shadow:0 0 0 2px #d77 inset}
+.strip code{font:500 14px "IBM Plex Mono",monospace;display:block}
+.strip small{color:#4d636a}
+.formwrap{display:flex;align-items:center;justify-content:center;padding:32px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:28px;width:100%;max-width:440px}
+.card h2{margin:0 0 4px;font-size:22px}
+.card p.sub{margin:0 0 20px;color:var(--mute)}
+label{display:block;font-weight:500;margin:14px 0 4px;font-size:14px}
+input,select{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:6px;background:var(--bg)}
+.btn{background:var(--brand);color:var(--brandink);border:0;border-radius:6px;padding:11px 16px;font-weight:600;cursor:pointer}
+.btn.full{width:100%;margin-top:22px}
+.btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}
+.err{color:var(--bad);font-size:14px;margin-top:10px;min-height:20px}
+.note{color:var(--mute);font-size:13px;margin-top:14px}
+/* app */
+#app{display:grid;grid-template-columns:250px 1fr;min-height:100vh}
+aside{background:var(--side);color:var(--sideink);padding:20px 12px;position:sticky;top:0;height:100vh;overflow:auto}
+aside h3{color:#fff;margin:0 8px 2px;font-size:18px}
+aside .who{margin:0 8px 18px;font-size:13px}
+aside .grp{margin:16px 8px 6px;font-size:12px;color:#7fa0a6}
+aside button{display:flex;justify-content:space-between;width:100%;text-align:left;background:none;border:0;color:inherit;padding:8px;border-radius:6px;cursor:pointer}
+aside button:hover{background:#ffffff14}
+aside button.on{background:var(--brand);color:var(--brandink);font-weight:600}
+aside button span{opacity:.7;font-size:12px}
+main{padding:28px 32px;min-width:0}
+main header{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap;margin-bottom:18px}
+main h2{margin:0;font-size:24px}
+main header p{margin:2px 0 0;color:var(--mute);max-width:70ch}
+.tools{display:flex;gap:8px;flex-wrap:wrap}
+.tools input{width:240px}
+.tw{background:var(--panel);border:1px solid var(--line);border-radius:10px;overflow-x:auto}
+table{border-collapse:collapse;width:100%;min-width:560px}
+th,td{text-align:left;padding:10px 14px;border-bottom:1px solid var(--line);white-space:nowrap}
+th{font-weight:600;color:var(--mute);font-size:13px;cursor:pointer;user-select:none;background:var(--bg)}
+tr:last-child td{border-bottom:0}
+td.id{color:var(--mute)}
+td.code{font-family:"IBM Plex Mono",monospace}
+.b{display:inline-block;padding:2px 9px;border-radius:20px;font-size:12.5px;font-weight:600}
+.b.ok{background:var(--okbg);color:var(--ok)}.b.bad{background:var(--badbg);color:var(--bad)}.b.warn{background:var(--warnbg);color:var(--warn)}.b.info{background:var(--infobg);color:var(--info)}
+.empty{padding:28px;color:var(--mute)}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:22px;margin-bottom:16px}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end}
+.row>div{flex:1;min-width:220px}
+.row .btn{margin-bottom:0}
+.res{margin-top:16px;padding:16px;border-radius:8px;font-weight:500}
+.res.ok{background:var(--okbg);color:var(--ok)}.res.bad{background:var(--badbg);color:var(--bad)}.res.warn{background:var(--warnbg);color:var(--warn)}
+.chain{list-style:none;margin:0;padding:0}
+.chain li{padding:8px 0 8px 22px;border-left:2px solid var(--line);position:relative;margin-left:6px}
+.chain li:before{content:"";position:absolute;left:-6px;top:15px;width:10px;height:10px;border-radius:50%;background:var(--brand)}
+.chain h4{margin:14px 0 2px;font-size:14px;color:var(--mute);font-weight:600}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:18px}
+.stat{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px}
+.stat b{font-size:26px;display:block}.stat span{color:var(--mute);font-size:13px}
+.menu{display:none}
+@media (max-width:820px){
+ #login{grid-template-columns:1fr}.hero{padding:32px 24px}.hero h1{font-size:28px}
+ #app{grid-template-columns:1fr}aside{position:static;height:auto}
+ main{padding:20px 16px}.tools input{width:100%}
+}
+@media (prefers-reduced-motion:no-preference){.res{animation:pop .2s ease-out}@keyframes pop{from{opacity:0;transform:translateY(4px)}}}
+</style>
+</head>
+<body>
+
+<section id="login">
+  <div class="hero">
+    <div>
+      <h1>Every batch, from factory to customer.</h1>
+      <p>MedTrace follows each medicine batch through shipments, stock and sales. Recalled, fake or expired batches are blocked from sale, and anyone can check a batch code.</p>
+    </div>
+    <div class="strip" aria-hidden="true">
+      <div class="pills"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+      <code>PCM-24A01</code><small>Paracetamol 500mg · Mfg 01/2025 · Exp 01/2027</small>
+    </div>
+  </div>
+  <div class="formwrap">
+    <form class="card" id="lf" novalidate>
+      <h2>Sign in to MedTrace</h2>
+      <p class="sub">Enter your details to open the datasets your role can see.</p>
+      <label for="n">Full name</label><input id="n" autocomplete="name" placeholder="e.g. Asha Mehta">
+      <label for="e">Email</label><input id="e" type="email" autocomplete="email" placeholder="name@organization.com">
+      <label for="r">Your role</label>
+      <select id="r">
+        <option value="regulator">Regulator</option><option value="manufacturer">Manufacturer</option>
+        <option value="distributor">Distributor</option><option value="pharmacy">Pharmacy</option>
+        <option value="customer">Customer</option>
+      </select>
+      <label for="o">Organization</label><select id="o"></select>
+      <label for="p">Password</label><input id="p" type="password" autocomplete="current-password" placeholder="At least 4 characters">
+      <div class="err" id="er" role="alert"></div>
+      <button class="btn full" type="submit">Sign in</button>
+      <p class="note">This is a demo with sample data. No account is created and nothing is sent anywhere.</p>
+    </form>
+  </div>
+</section>
+
+<section id="app" class="hide">
+  <aside>
+    <h3>MedTrace</h3>
+    <div class="who" id="who"></div>
+    <div id="nav"></div>
+    <div style="margin:18px 8px 0;display:flex;gap:8px;flex-direction:column">
+      <button class="btn ghost" id="th" style="color:inherit;border-color:#ffffff33;justify-content:center">Switch theme</button>
+      <button class="btn ghost" id="lo" style="color:inherit;border-color:#ffffff33;justify-content:center">Sign out</button>
+    </div>
+  </aside>
+  <main id="main"></main>
+</section>
+
+<script>
+const T={
+organizations:{t:"Organizations",d:"Everyone who handles medicine: manufacturers, distributors, pharmacies and regulators.",c:["org_id","name","org_type","license_no","city","country"],r:[
+[1,"Sunrise Pharma Ltd","manufacturer","MFG-1001","Mumbai","India"],[2,"Helix Labs","manufacturer","MFG-1002","Hyderabad","India"],[3,"MedLink Distributors","distributor","DST-2001","Delhi","India"],[4,"CityCare Distribution","distributor","DST-2002","Pune","India"],[5,"Apollo Wellness Pharmacy","pharmacy","PHR-3001","Delhi","India"],[6,"GreenCross Pharmacy","pharmacy","PHR-3002","Jaipur","India"],[7,"National Drug Regulator","regulator","REG-9001","New Delhi","India"]]},
+medicines:{t:"Medicines",d:"The product catalogue and who makes each medicine.",c:["medicine_id","name","composition","dosage_form","strength","manufacturer_id"],r:[
+[1,"Paracetamol 500mg","Paracetamol","Tablet","500mg",1],[2,"Amoxicillin 250","Amoxicillin trihydrate","Capsule","250mg",2],[3,"Cetirizine 10","Cetirizine HCl","Tablet","10mg",1],[4,"Azithromycin 500","Azithromycin","Tablet","500mg",2]]},
+batches:{t:"Batches",d:"Each production run, with its printed batch code and current status.",c:["batch_id","batch_code","medicine_id","manufacturer_id","mfg_date","expiry_date","quantity","status"],r:[
+[1,"PCM-24A01",1,1,"2025-01-10","2027-01-09",50000,"genuine"],[2,"PCM-24B07",1,1,"2025-03-02","2027-03-01",40000,"recalled"],[3,"AMX-24C11",2,2,"2025-02-15","2027-02-14",30000,"genuine"],[4,"CET-23D04",3,1,"2023-06-01","2025-05-31",20000,"expired"],[5,"AZT-25E02",4,2,"2025-06-20","2027-06-19",25000,"suspected_fake"],[6,"AZT-25E09",4,2,"2025-08-01","2027-07-31",25000,"genuine"]]},
+shipments:{t:"Shipments",d:"Stock moving from one organization to another.",c:["shipment_id","from_org_id","to_org_id","shipped_at","received_at","status"],r:[
+[1,1,3,"2025-01-20","2025-01-23","received"],[2,3,5,"2025-02-05","2025-02-06","received"],[3,1,3,"2025-03-10","2025-03-12","received"],[4,3,6,"2025-03-20","2025-03-22","received"],[5,2,4,"2025-03-01","2025-03-04","received"],[6,4,5,"2025-03-15","","in_transit"]]},
+shipment_items:{t:"Shipment items",d:"Which batches, and how many, travel in each shipment.",c:["shipment_id","batch_id","quantity"],r:[[1,1,5000],[2,1,1000],[3,2,4000],[4,2,800],[5,3,3000],[6,3,500]]},
+inventory:{t:"Inventory",d:"How much of each batch an organization holds right now.",c:["org_id","batch_id","quantity_on_hand","last_updated"],r:[[3,1,4000,"2025-02-05"],[5,1,600,"2025-02-12"],[3,2,3200,"2025-03-20"],[6,2,0,"2025-03-26"],[4,3,2500,"2025-03-04"]]},
+customers:{t:"Customers",d:"People who bought medicine from a pharmacy.",c:["customer_id","name","phone","email"],r:[[1,"Rahul Verma","9810011122","rahul@mail.com"],[2,"Anita Sharma","9811122233","anita@mail.com"],[3,"Imran Khan","9822233344","imran@mail.com"],[4,"Priya Nair","9833344455","priya@mail.com"]]},
+sales:{t:"Sales",d:"One bill per sale, from a pharmacy to a customer.",c:["sale_id","pharmacy_id","customer_id","sale_date","total_amount"],r:[[1,5,1,"2025-02-10",120],[2,5,2,"2025-02-12",95],[3,6,3,"2025-03-25",210],[4,6,4,"2025-03-26",60]]},
+sale_items:{t:"Sale items",d:"The lines on each bill.",c:["sale_id","batch_id","quantity","unit_price"],r:[[1,1,4,30],[2,1,5,19],[3,2,7,30],[4,2,2,30]]},
+recalls:{t:"Recalls",d:"Problems found by a regulator, with severity and reason.",c:["recall_id","batch_id","regulator_id","reason","severity","recall_date","status"],r:[[1,2,7,"Failed dissolution test","high","2025-04-02","active"],[2,5,7,"Counterfeit packaging reported","critical","2025-09-01","active"]]},
+verification_scans:{t:"Verification scans",d:"Every time someone checked a batch code. Unknown codes may point to fake medicine.",c:["scan_id","batch_code_entered","batch_id","customer_id","scanned_at","result"],r:[[1,"PCM-24A01",1,1,"2025-02-11 10:02","genuine"],[2,"PCM-24B07",2,3,"2025-04-03 18:40","recalled"],[3,"XYZ-99999","",""," 2025-05-01 09:15","unknown"],[4,"CET-23D04",4,2,"2025-06-02 14:21","expired"]]},
+audit_log:{t:"Audit log",d:"A record of every batch status change: who, when and why.",c:["log_id","batch_id","old_status","new_status","changed_by_org_id","changed_at","reason"],r:[[1,4,"genuine","expired",7,"2025-06-01","Expiry date passed"],[2,2,"genuine","recalled",7,"2025-04-02","Recall #1 issued"],[3,5,"genuine","suspected_fake",7,"2025-09-01","Counterfeit packaging reported"]]}
+};
+const ACCESS={
+regulator:Object.keys(T),
+manufacturer:["medicines","batches","shipments","shipment_items","inventory","recalls","organizations"],
+distributor:["organizations","medicines","batches","shipments","shipment_items","inventory","recalls"],
+pharmacy:["medicines","batches","inventory","customers","sales","sale_items","recalls"],
+customer:["medicines","batches","recalls"]};
+const GROUPS=[["Master data",["organizations","medicines","batches"]],["Movement",["shipments","shipment_items","inventory"]],["Sales",["customers","sales","sale_items"]],["Safety",["recalls","verification_scans","audit_log"]]];
+const $=s=>document.querySelector(s);
+const esc=v=>String(v??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const org=id=>{const o=T.organizations.r.find(x=>x[0]==id);return o?o[1]:id};
+const bc=id=>{const b=T.batches.r.find(x=>x[0]==id);return b?b[1]:id};
+const BADGE={genuine:"ok",received:"ok",active:"warn",recalled:"bad",suspected_fake:"bad",expired:"warn",unknown:"info",in_transit:"info",high:"bad",critical:"bad",manufacturer:"info",distributor:"info",pharmacy:"info",regulator:"info"};
+function cell(col,v){
+ if(v===""||v==null)return '<td class="id">–</td>';
+ if(col==="batch_id")return `<td class="code">${esc(bc(v))}</td>`;
+ if(["manufacturer_id","from_org_id","to_org_id","pharmacy_id","org_id","regulator_id","changed_by_org_id"].includes(col))return `<td>${esc(org(v))}</td>`;
+ if(col==="medicine_id"){const m=T.medicines.r.find(x=>x[0]==v);return `<td>${esc(m?m[1]:v)}</td>`}
+ if(col==="customer_id"){const m=T.customers.r.find(x=>x[0]==v);return `<td>${esc(m?m[1]:v)}</td>`}
+ if(BADGE[v])return `<td><span class="b ${BADGE[v]}">${esc(String(v).replace("_"," "))}</span></td>`;
+ if(col==="batch_code"||col==="batch_code_entered")return `<td class="code">${esc(v)}</td>`;
+ if(col.endsWith("_id")&&col===T_PK[cur])return `<td class="id">${esc(v)}</td>`;
+ if(col==="total_amount"||col==="unit_price")return `<td>₹${esc(v)}</td>`;
+ return `<td>${esc(v)}</td>`}
+const T_PK={};Object.keys(T).forEach(k=>T_PK[k]=T[k].c[0]);
+let cur="",user=null,sortCol=-1,sortDir=1,q="";
+const label=c=>c.replace(/_id$/,"").replace(/_/g," ").replace(/^./,x=>x.toUpperCase());
+
+// login
+const os=$("#o");os.innerHTML=T.organizations.r.map(o=>`<option value="${o[0]}" data-t="${o[2]}">${esc(o[1])} (${o[2]})</option>`).join("")+'<option value="0">Not listed / individual</option>';
+$("#r").addEventListener("change",()=>{const v=$("#r").value;const opt=[...os.options].find(o=>o.dataset.t===v);if(opt)os.value=opt.value;else if(v==="customer")os.value="0"});
+$("#lf").addEventListener("submit",e=>{
+ e.preventDefault();const n=$("#n").value.trim(),em=$("#e").value.trim(),p=$("#p").value;
+ if(n.length<2)return $("#er").textContent="Enter your full name.";
+ if(!/^\S+@\S+\.\S+$/.test(em))return $("#er").textContent="Enter a valid email address, like name@example.com.";
+ if(p.length<4)return $("#er").textContent="Password must be at least 4 characters.";
+ $("#er").textContent="";
+ user={name:n,email:em,role:$("#r").value,org:os.options[os.selectedIndex].text.replace(/ \(.*\)$/,"")};
+ start()});
+function start(){
+ $("#login").classList.add("hide");$("#app").classList.remove("hide");
+ $("#who").innerHTML=`${esc(user.name)}<br>${esc(user.role)} · ${esc(user.org)}`;
+ const allowed=ACCESS[user.role];
+ let h=`<button data-k="_home">Overview</button><button data-k="_verify">Verify a batch code</button>`;
+ if(user.role!=="customer")h+=`<button data-k="_trace">Trace a batch</button>`;
+ GROUPS.forEach(([g,ks])=>{const k2=ks.filter(k=>allowed.includes(k));if(k2.length)h+=`<div class="grp">${g}</div>`+k2.map(k=>`<button data-k="${k}">${T[k].t}<span>${T[k].r.length}</span></button>`).join("")});
+ $("#nav").innerHTML=h;go("_home")}
+$("#nav").addEventListener("click",e=>{const b=e.target.closest("button");if(b)go(b.dataset.k)});
+$("#lo").onclick=()=>{user=null;$("#app").classList.add("hide");$("#login").classList.remove("hide");$("#p").value=""};
+$("#th").onclick=()=>{const r=document.documentElement;const dark=r.dataset.theme?r.dataset.theme==="dark":matchMedia("(prefers-color-scheme:dark)").matches;r.dataset.theme=dark?"light":"dark"};
+
+function go(k){
+ cur=k;sortCol=-1;q="";
+ document.querySelectorAll("#nav button").forEach(b=>b.classList.toggle("on",b.dataset.k===k));
+ const m=$("#main");
+ if(k==="_home")m.innerHTML=home();
+ else if(k==="_verify"){m.innerHTML=verifyView();$("#vf").onsubmit=verify}
+ else if(k==="_trace"){m.innerHTML=traceView();$("#tf").onsubmit=trace}
+ else{m.innerHTML=`<header><div><h2>${T[k].t}</h2><p>${T[k].d}</p></div><div class="tools"><input id="s" type="search" placeholder="Search ${T[k].t.toLowerCase()}" aria-label="Search"></div></header><div class="tw" id="tb"></div>`;
+  $("#s").oninput=e=>{q=e.target.value.toLowerCase();draw()};draw()}
+ window.scrollTo(0,0)}
+function draw(){
+ const d=T[cur];let rows=d.r.filter(r=>!q||r.some(v=>String(v).toLowerCase().includes(q)||String(bc(v)).toLowerCase().includes(q)||String(org(v)).toLowerCase().includes(q)));
+ if(sortCol>=0)rows=[...rows].sort((a,b)=>(a[sortCol]>b[sortCol]?1:a[sortCol]<b[sortCol]?-1:0)*sortDir);
+ $("#tb").innerHTML=rows.length?`<table><thead><tr>${d.c.map((c,i)=>`<th data-i="${i}" scope="col">${label(c)}${sortCol===i?(sortDir>0?" ▲":" ▼"):""}</th>`).join("")}</tr></thead><tbody>${rows.map(r=>`<tr>${r.map((v,i)=>cell(d.c[i],v)).join("")}</tr>`).join("")}</tbody></table>`:'<div class="empty">No rows match your search. Clear the search box to see all rows.</div>';
+ $("#tb").querySelectorAll("th").forEach(th=>th.onclick=()=>{const i=+th.dataset.i;sortDir=sortCol===i?-sortDir:1;sortCol=i;draw()})}
+
+function home(){
+ const bs=T.batches.r,cnt=s=>bs.filter(b=>b[7]===s).length;
+ const stats=[["Batches tracked",bs.length],["Genuine",cnt("genuine")],["Recalled",cnt("recalled")],["Suspected fake",cnt("suspected_fake")],["Expired",cnt("expired")],["Scans logged",T.verification_scans.r.length]];
+ const allowed=ACCESS[user.role];
+ return `<header><div><h2>Welcome, ${esc(user.name.split(" ")[0])}</h2><p>You are signed in as ${esc(user.role)} for ${esc(user.org)}. You can open ${allowed.length} datasets, verify batch codes${user.role!=="customer"?" and trace any batch to the customers who received it":""}.</p></div></header>
+ <div class="stats">${stats.map(s=>`<div class="stat"><b>${s[1]}</b><span>${s[0]}</span></div>`).join("")}</div>
+ <div class="panel"><b>How a batch moves</b><ul class="chain"><li>Manufacturer produces a batch of a medicine</li><li>Shipments carry it to distributors, then pharmacies, and inventory is updated</li><li>A pharmacy sells it to a customer; sales of recalled, fake or expired batches are blocked</li><li>A regulator can recall it; every status change goes to the audit log</li><li>Anyone can verify the batch code</li></ul></div>`}
+
+function status(b){
+ const today=new Date().toISOString().slice(0,10);
+ if(b[7]==="recalled")return["bad","Recalled. Do not sell or use this batch."];
+ if(b[7]==="suspected_fake")return["bad","Suspected fake. Do not sell or use this batch."];
+ if(b[7]==="expired"||b[5]<today)return["warn","Expired. Do not use this batch."];
+ return["ok","Genuine. This batch code is valid and not recalled."]}
+function verifyView(){return `<header><div><h2>Verify a batch code</h2><p>Type the batch code printed on the strip. The result is genuine, recalled, expired or unknown.</p></div></header>
+ <form class="panel" id="vf"><div class="row"><div><label for="bcode">Batch code</label><input id="bcode" placeholder="e.g. PCM-24A01" autocomplete="off"></div><button class="btn" type="submit">Check batch</button></div><p class="note">Try PCM-24A01, PCM-24B07, CET-23D04 or a made-up code.</p><div id="vr"></div></form>
+ <div class="panel"><p class="note" style="margin:0">A valid code confirms the batch exists and is safe to use on paper. It cannot prove the physical strip is authentic, since a counterfeit can copy a real code.</p></div>`}
+function verify(e){
+ e.preventDefault();const code=$("#bcode").value.trim().toUpperCase();if(!code)return $("#vr").innerHTML='<div class="res warn">Enter a batch code to check.</div>';
+ const b=T.batches.r.find(x=>x[1]===code);
+ if(!b)return $("#vr").innerHTML=`<div class="res warn">Unknown. No batch has the code ${esc(code)}, so this medicine may be fake. Report it to the regulator.</div>`;
+ const [c,msg]=status(b),m=T.medicines.r.find(x=>x[0]===b[2]);
+ $("#vr").innerHTML=`<div class="res ${c}">${esc(msg)}<div style="font-weight:400;margin-top:6px">${esc(m[1])} · made by ${esc(org(b[3]))} · expires ${b[5]}</div></div>`}
+
+function traceView(){return `<header><div><h2>Trace a batch</h2><p>Follow one batch through shipments, stock and sales to find everyone who received it. Use this after a recall.</p></div></header>
+ <form class="panel" id="tf"><div class="row"><div><label for="tb2">Batch</label><select id="tb2">${T.batches.r.map(b=>`<option value="${b[0]}">${b[1]} (${b[7].replace("_"," ")})</option>`).join("")}</select></div><button class="btn" type="submit">Trace batch</button></div></form><div id="tr"></div>`}
+function trace(e){
+ e.preventDefault();const id=+$("#tb2").value,b=T.batches.r.find(x=>x[0]===id),m=T.medicines.r.find(x=>x[0]===b[2]);
+ const sh=T.shipment_items.r.filter(x=>x[1]===id).map(x=>{const s=T.shipments.r.find(y=>y[0]===x[0]);return `<li>Shipment #${s[0]}: ${esc(org(s[1]))} to ${esc(org(s[2]))}, ${x[2]} units, ${s[3]} <span class="b ${BADGE[s[5]]}">${s[5].replace("_"," ")}</span></li>`});
+ const inv=T.inventory.r.filter(x=>x[1]===id).map(x=>`<li>${esc(org(x[0]))} holds ${x[2]} units (updated ${x[3]})</li>`);
+ const sl=T.sale_items.r.filter(x=>x[1]===id).map(x=>{const s=T.sales.r.find(y=>y[0]===x[0]),c=T.customers.r.find(y=>y[0]===s[2]);return `<li>${esc(c[1])} (${esc(c[2])}) bought ${x[2]} units from ${esc(org(s[1]))} on ${s[3]}</li>`});
+ const [c,msg]=status(b);
+ const sec=(t,a,n)=>`<h4>${t}</h4>${a.length?`<ul class="chain">${a.join("")}</ul>`:`<p class="note">${n}</p>`}`;
+ $("#tr").innerHTML=`<div class="panel"><div class="res ${c}" style="margin:0 0 6px"><b>${esc(b[1])}</b>: ${esc(m[1])}. ${esc(msg)}</div>${sec("Shipments",sh,"This batch has not been shipped.")}${sec("Stock held now",inv,"No organization holds stock of this batch.")}${sec("Customers who bought it",sl,"No recorded sales, so no customers are affected.")}</div>`}
+</script>
+</body>
+</html>
