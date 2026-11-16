@@ -1,0 +1,17 @@
+{
+  "name": "med-trace",
+  "version": "1.0.0",
+  "description": "MedTrace - Medicine Traceability System (MySQL backed)",
+  "type": "module",
+  "main": "server/server.js",
+  "scripts": {
+    "start": "node server/server.js",
+    "init-db": "node server/init-db.js",
+    "test": "node tests/e2e.mjs"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "mysql2": "^3.11.0"
+  }
+}
